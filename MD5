@@ -1,0 +1,15 @@
+549a982b68e707f782c7b31fc4c2728b *DESCRIPTION
+00372db8b5f0099021ca02298cfb1b42 *LICENSE
+7d342acae36b86f2bf953e60b6fa18fd *NAMESPACE
+c1a8811aeea31676b5ea35cd3246892a *R/getEdges.R
+d5fa394b2f72477055b738d5d046981e *R/getNodes.R
+7199b685523b3ed21cb6c35bae93d9ed *R/graphTweets.R
+cd5ed00899272030b04ee65089a38412 *R/utils.R
+d8792e7eff9c12f194161a4103c7662c *README.md
+3c3ef5bbb520bdb9134da6c42bd2ee5e *man/getEdges.Rd
+264bb4e714b050f7863e93d3aecabf61 *man/getNodes.Rd
+23d7a5dd1b00dcf1f926715c7e9eccf9 *man/graphTweets.Rd
+34611fad6550ed050a1d483efb8ecad1 *tests/testthat.R
+fd35313bdf31b1bebf5079843ceea8c0 *tests/testthat/test_dat.RData
+1eda73142064f0104328777c521c4f40 *tests/testthat/test_edges.R
+b45e4d6147041e1eb96f47eed13c156d *tests/testthat/test_nodes.R
