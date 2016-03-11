@@ -5,19 +5,14 @@ context("getNodes tests")
 test_that("getNodes error", {
   
   # setup
-  tweets <- get(load("test_dat.RData"))
+  tweets <- get(load("tweets.RData"))
   edges <- getEdges(tweets, "text", "screenName")
   
-  # test source class
-  edges$source <- as.factor(edges$source)
-  expect_error(getNodes(edges))
-  
-  #test target class
-  edges$source <- as.character(edges$source)
-  edges$target <- as.factor(edges$target)
-  expect_error(getNodes(edges))
-  
   expect_error(getNodes())
+  
+  # test invalid source and target
+  expect_error(getNodes(tweets, source = "error"))
+  expect_error(getNodes(tweets, source = "source", target = "error"))
   
   lst <- list(tweets)
   expect_error(getNodes(lst))
@@ -26,7 +21,7 @@ test_that("getNodes error", {
 test_that("getNodes tests", {
   
   # setup
-  tweets <- get(load("test_dat.RData"))
+  tweets <- get(load("tweets.RData"))
   edges <- getEdges(tweets, "text", "screenName")
   
   # class
@@ -47,8 +42,8 @@ test_that("getNodes tests", {
                       "retweetCount", "isRetweet")
   
   # tests
-  expect_equal(nrow(n_nodes), length(nodes))
-  expect_is(nodes, "character")
+  expect_equal(nrow(n_nodes), nrow(nodes))
+  expect_is(nodes, "data.frame")
   expect_is(n_nodes, "data.frame")
   
   # test length
@@ -56,5 +51,5 @@ test_that("getNodes tests", {
   
   n <- getNodes(edg)
   
-  expect_equal(length(n), 8)
+  expect_equal(nrow(n), 8)
 })

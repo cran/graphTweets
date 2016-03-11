@@ -2,16 +2,24 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/t37a595yg5eb2sx6/branch/master?svg=true)](https://ci.appveyor.com/project/JohnCoene/graphtweets/branch/master)
 [![codecov.io](https://codecov.io/github/JohnCoene/graphTweets/coverage.svg?branch=master)](https://codecov.io/github/JohnCoene/graphTweets?branch=master)
 
+![gephi.gif](https://github.com/JohnCoene/docs/raw/master/output.gif)
+
 # GraphTweets #
 
 Visualise networks of Twitter interactions
 
-Features only *one* functions:
+Features only *three* functions:
 
 * `getEdges`: build edge table from tweets
 * `getNodes`: get nodes from edges
+* `dynamise`: make a temporal graph
 
 Build edge table and vertices to plot social network.
+
+## Documentation ##
+
+* [Examples](http://johncoene.github.io/projects/ex/graphTweets_examples.html)
+* [Manual](http://johncoene.github.io/projects/docs/GraphTweets.pdf)
 
 ## Examples ##
 
@@ -45,3 +53,7 @@ g <- graph.data.frame(edges, directed=TRUE, vertices = nodes)
 
 plot(g)
 ```
+
+## Other Projects ##
+
+See my other projects at [http://johncoene.github.io/projects/](http://johncoene.github.io/projects/)

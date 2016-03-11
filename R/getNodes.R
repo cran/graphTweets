@@ -1,6 +1,6 @@
-#' getNodes
+#' Build node table from edges
 #' 
-#' @description get nodes from a data.frame of edges as typically returned by 
+#' @description Get nodes from a data.frame of edges as typically returned by 
 #' \code{\link{getEdges}}
 #' 
 #' @param edges data.frame of edges as typically returned by 
@@ -12,24 +12,23 @@
 #' @param ... Any other columns to be passed on to the \code{source} nodes - 
 #' will not be applied to \code{target} nodes.
 #' 
-#' @details Duplicate values are dropped, additional arguments (\code{...}) are 
-#' only applied to nodes from \code{source}.
+#' @details One must keep in mind that nodes need to be unique therefore 
+#' duplicate values (\code{...}) are dropped. Also, the meta-data (\code{...}), 
+#' only applies to the source of edges; NAs are generated for target nodes.
 #' 
 #' @examples 
 #' \dontrun{
-#' # load twitteR
+#' # load twitteR package to get data
 #' library(twitteR)
 #' 
-#' # authenticate
-#' token <- setup_twitter_oauth(consumer_key, consumer_secret, 
-#'                              access_token=NULL, access_secret=NULL)
-#'                              
-#' # search tweets
+#' # replace with your details
+#' setup_twitter_oauth(consumer_key, consumer_secret, access_token, 
+#'                     access_secret)
+#'                     
+#' # fetch tweets on rstats
 #' tweets <- searchTwitter("rstats", n = 200)
-#' 
-#' # unlist to data.frame
 #' tweets <- twListToDF(tweets)
-#' 
+#'                              
 #' # get edges
 #' edges <- getEdges(data = tweets, tweets = "text", source = "screenName")
 #' 
@@ -40,7 +39,7 @@
 #' library(igraph)
 #' 
 #' # plot
-#' g <- graph.data.frame(edges, directed=TRUE, vertices = nodes)
+#' g <- graph.data.frame(edges, directed = TRUE, vertices = nodes)
 #' 
 #' plot(g)
 #' }
@@ -55,13 +54,13 @@ getNodes <- function(edges, source = "source", target = "target", ...) {
     stop("edges must be a data.frame")
   } 
   
-  if (class(edges[, source]) != "character"){
-    stop("source must be of class character")
-  }
-  
-  if (class(edges[, target]) != "character"){
-    stop("target must be of class character")
+  if (!source %in% names(edges)) {
+    stop(paste0("no column named '", source, "' found in data"))
   } 
+  
+  if (!target %in% names(edges)) {
+    stop(paste0("no column named '", target, "' found in data"))
+  }
   
   args <- unlist(list(...))
   
@@ -69,7 +68,7 @@ getNodes <- function(edges, source = "source", target = "target", ...) {
     
     # split
     src <- unique(edges[, c(source, args)])
-    tgt <- data.frame(target = as.character(unique(edges[, target])))
+    tgt <- data.frame(target = unique(edges[, target]))
     
     # remove duplicates
     src <- src[!duplicated(src[, source]),]
@@ -81,7 +80,7 @@ getNodes <- function(edges, source = "source", target = "target", ...) {
     # anti_join
     tgt <- dplyr::anti_join(tgt, src, by = c(target = source))
     
-    # adds ards
+    # adds args
     tgt[, args] <- NA
     
     # rename for bind
@@ -93,7 +92,7 @@ getNodes <- function(edges, source = "source", target = "target", ...) {
     names(nodes)[1] <- "nodes"
     
     # order
-    nodes[order(nodes$nodes),]
+    nodes <- nodes[order(nodes$nodes),]
     
   } else {
     
@@ -103,6 +102,8 @@ getNodes <- function(edges, source = "source", target = "target", ...) {
     nodes <- unique(nodes)
     
     nodes <- nodes[order(nodes)]
+    
+    nodes <- data.frame(nodes = nodes)
   }
   
   return(nodes)

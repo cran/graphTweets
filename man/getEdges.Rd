@@ -2,13 +2,13 @@
 % Please edit documentation in R/getEdges.R
 \name{getEdges}
 \alias{getEdges}
-\title{getEdges}
+\title{Build list of edges from tweets}
 \usage{
 getEdges(data, tweets, source, str.length = NULL, ...)
 }
 \arguments{
 \item{data}{\code{data.frame} of tweets, typically returned by 
-\code{\link[twitteR]{searchTwitter}}, required}
+\code{\link[twitteR]{searchTwitter}}, required.}
 
 \item{tweets}{Column name of tweets within \code{data}, must be a 
 \code{character} string, required.}
@@ -17,13 +17,13 @@ getEdges(data, tweets, source, str.length = NULL, ...)
 \code{character} string, required.}
 
 \item{str.length}{Defaults to \code{NULL}. Shorten length of @tags 
-(see details), to a maximum number of characters, optional.}
+(see details), to a maximum number of characters.}
 
 \item{...}{Any other columns to be passed on to the edges.}
 }
 \description{
-Builds a table of edges (source, target) from a list of tweets 
-by subsetting @tags from the text.
+Builds a table of edges (source, target) from a data.frame 
+of tweets by subsetting @tags from the text.
 }
 \details{
 The edges function takes in a data frame of tweets, typically 
@@ -32,22 +32,21 @@ tweets to subset the @tags subsequently forming a table of edges. @tags
 are subsets of regular expressions between at-signs (@) and first 
 space (" "). 
 Note that the table of edges returned is meant for a directed graph.
-Node labels can be shortened using the strLength parameters. 
-This is useful for non-latin alphabet where nodes may be wrongly identified.
+Node labels can be shortened using the \code{str.length} parameters. 
+This is useful for non-latin alphabet where nodes may be wrongly identified 
+(i.e.: Chinese Sina Weibo data).
 }
 \examples{
 \dontrun{
-# load twitteR
+# load twitteR package to get data
 library(twitteR)
 
-# authenticate
-token <- setup_twitter_oauth(consumer_key, consumer_secret, 
-                             access_token=NULL, access_secret=NULL)
-                             
-# search tweets
+# replace with your details
+setup_twitter_oauth(consumer_key, consumer_secret, access_token, 
+                    access_secret)
+                    
+# fetch tweets on rstats
 tweets <- searchTwitter("rstats", n = 200)
-
-# unlist to data.frame
 tweets <- twListToDF(tweets)
 
 # get edges
@@ -72,6 +71,7 @@ John Coene \email{john.coene@gmail.com}
 }
 \seealso{
 \href{http://cran.r-project.org/web/packages/twitteR/twitteR.pdf}{twitteR} 
-and \href{http://cran.r-project.org/web/packages/streamR/streamR.pdf}{streamR} packages wherefrom the data (tweets_df) can be obtained.
+and \href{http://cran.r-project.org/web/packages/streamR/streamR.pdf}{streamR} 
+packages wherefrom the data (\code{data}) can be obtained.
 }
 

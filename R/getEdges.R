@@ -1,16 +1,16 @@
-#' getEdges
+#' Build list of edges from tweets
 #' 
-#' @description Builds a table of edges (source, target) from a list of tweets 
-#' by subsetting @@tags from the text.
+#' @description Builds a table of edges (source, target) from a data.frame 
+#' of tweets by subsetting @@tags from the text.
 #' 
 #' @param data \code{data.frame} of tweets, typically returned by 
-#' \code{\link[twitteR]{searchTwitter}}, required
+#' \code{\link[twitteR]{searchTwitter}}, required.
 #' @param tweets Column name of tweets within \code{data}, must be a 
 #' \code{character} string, required.
 #' @param source User names or ID column of \code{tweets} author, must be a 
 #' \code{character} string, required.
 #' @param str.length Defaults to \code{NULL}. Shorten length of @@tags 
-#' (see details), to a maximum number of characters, optional.
+#' (see details), to a maximum number of characters.
 #' @param ... Any other columns to be passed on to the edges.
 #' 
 #' @details The edges function takes in a data frame of tweets, typically 
@@ -19,25 +19,25 @@
 #' are subsets of regular expressions between at-signs (@@) and first 
 #' space (" "). 
 #' Note that the table of edges returned is meant for a directed graph.
-#' Node labels can be shortened using the strLength parameters. 
-#' This is useful for non-latin alphabet where nodes may be wrongly identified. 
+#' Node labels can be shortened using the \code{str.length} parameters. 
+#' This is useful for non-latin alphabet where nodes may be wrongly identified 
+#' (i.e.: Chinese Sina Weibo data). 
 #' 
 #' @seealso \href{http://cran.r-project.org/web/packages/twitteR/twitteR.pdf}{twitteR} 
-#' and \href{http://cran.r-project.org/web/packages/streamR/streamR.pdf}{streamR} packages wherefrom the data (tweets_df) can be obtained.
+#' and \href{http://cran.r-project.org/web/packages/streamR/streamR.pdf}{streamR} 
+#' packages wherefrom the data (\code{data}) can be obtained.
 #' 
 #' @examples 
 #' \dontrun{
-#' # load twitteR
+#' # load twitteR package to get data
 #' library(twitteR)
 #' 
-#' # authenticate
-#' token <- setup_twitter_oauth(consumer_key, consumer_secret, 
-#'                              access_token=NULL, access_secret=NULL)
-#'                              
-#' # search tweets
+#' # replace with your details
+#' setup_twitter_oauth(consumer_key, consumer_secret, access_token, 
+#'                     access_secret)
+#'                     
+#' # fetch tweets on rstats
 #' tweets <- searchTwitter("rstats", n = 200)
-#' 
-#' # unlist to data.frame
 #' tweets <- twListToDF(tweets)
 #' 
 #' # get edges
@@ -65,6 +65,12 @@ getEdges <- function(data, tweets, source, str.length = NULL, ...) {
     stop("data must be a data.frame")
   } 
   
+  if (!tweets %in% names(data)) {
+    stop(paste0("tweets: no column named '", tweets, "' found in data"))
+  } else if (!source %in% names(data)) {
+    stop(paste0("source: no column named '", source, "' found in data"))
+  }
+  
   if (missing(tweets)) {
     stop("missing tweets column")
   } else if (missing(source)) {
@@ -75,7 +81,7 @@ getEdges <- function(data, tweets, source, str.length = NULL, ...) {
     stop("source must be of class character")
   } else if (!is.null(str.length) && class(str.length) != "numeric") {
     stop("str.length must be numeric")
-  }
+  } 
   
   # cut source
   if(!is.null(str.length)){
@@ -118,7 +124,7 @@ getEdges <- function(data, tweets, source, str.length = NULL, ...) {
   
   if(length(args)) {
     
-    ext <- as.data.frame(data[, args])
+    ext <- as.data.frame(data[, c(args)])
     
     edges <- data.frame()
     
@@ -154,6 +160,9 @@ getEdges <- function(data, tweets, source, str.length = NULL, ...) {
     # rename
     names(edges) <- c("source", "target")
   }
+  
+  edges$source <- as.character(edges$source)
+  edges$target <- as.character(edges$target)
   
   return(edges)
 }
