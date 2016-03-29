@@ -4,6 +4,9 @@ context("getEdges tests")
 
 test_that("test getEdges errors", {
   
+  skip_on_cran()
+  
+  # setup
   tweets <- get(load("tweets.RData"))
   
   # test required
@@ -36,6 +39,9 @@ test_that("test getEdges errors", {
 
 test_that("test getEdges no additional arguments", {
   
+  skip_on_cran()
+  
+  # setup
   tweets <- get(load("tweets.RData"))
   
   # names
@@ -51,6 +57,9 @@ test_that("test getEdges no additional arguments", {
 
 test_that("test getEdges additional arguments", {
   
+  skip_on_cran()
+  
+  # setup
   tweets <- get(load("tweets.RData"))
   
   # names
@@ -69,6 +78,9 @@ test_that("test getEdges additional arguments", {
 
 test_that("test str.Length", {
   
+  skip_on_cran()
+  
+  # setup
   tweets <- get(load("tweets.RData"))
   
   edges5 <- getEdges(tweets, "text", "screenName", str.length = 5)
