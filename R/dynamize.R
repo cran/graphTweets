@@ -9,7 +9,7 @@
 #' \code{character} string, required.
 #' @param source User names or ID column of \code{tweets} author, must be a 
 #' \code{character} string, required.
-#' @param start.stamp time.stamp to dynamise, typically a date or time, but may 
+#' @param start.stamp Typically a date or time, but may 
 #' also be an interger or a factor, cannot be a character.
 #' @param end.stamp The end of the time stamp, or when edges are to leave the 
 #' graph, defaults to \code{NULL} (edges never disappear). See details.
@@ -25,8 +25,8 @@
 #' @param open if \code{write = TRUE}, \code{open = TRUE} opens file in 
 #' \href{Gephi}{https://gephi.org/}.
 #' 
-#' @details \code{end.stamp}: When the edges are to disappear, consider lifetime 
-#' of a tweet, by default edges stay.
+#' @details \code{end.stamp}: When the edges are to disappear (consider lifetime 
+#' of a tweet), by default edges stay on the graph forever.
 #' 
 #' Valid values for \code{format}:
 #' \itemize{
@@ -42,26 +42,19 @@
 #' }
 #' 
 #' @examples 
-#' \dontrun{
-#' # load twitteR package to get data
-#' library(twitteR)
-#' 
-#' # replace with your details
-#' setup_twitter_oauth(consumer_key, consumer_secret, access_token, 
-#'                     access_secret)
-#'                     
-#' # fetch tweets on rstats
-#' tweets <- searchTwitter("rstats", n = 200)
-#' tweets <- twListToDF(tweets)
+#' tweets <- data.frame(text = c("I tweet @you about @him",
+#'                               "I tweet @me about @you"),
+#'                        screenName = c("me", "him"),
+#'                        created = as.Date(c("2016-01-01", "2016-02-02")),
+#'                        stringsAsFactors = FALSE)
 #' 
 #' # create dynamic graph
 #' dyn <- dynamise(tweets, tweets = "text", source = "screenName", 
-#'                 time.stamp = "created")
+#'                 start.stamp = "created")
 #'                 
-#' # create dynamic graph and open in Gephi
+#' # create dynamic graph with 60 min lasting edges
 #' dyn <- dynamise(tweets, tweets = "text", source = "screenName", 
-#'                 time.stamp = "created", write = TRUE, open = TRUE)
-#' }
+#'                 start.stamp = "created", end = 3600)
 #' 
 #' @export
 #' 

@@ -1,20 +1,17 @@
-# startUpMessage -------------------------------
-.onAttach <- function(libname, pkgname = "fbAdsInsightsR") {
-  packageStartupMessage("Run package?graphTweets for examples")
-}
-
 # global variables to avoid R CMD CHECK note (timeNodes) 
 globalVariables(c("start.stamp", "end.stamp"))
 
 # clean handles
 cleanHandles <- function(handles) {
-  # remove unwanted punctuation
-  handles <- gsub(":", "",handles)
-  handles <- gsub(",", "",handles)
-  handles <- gsub(";", "",handles)
-  handles <- gsub(">", "",handles)
-  handles <- gsub("<", "",handles)
-  handles <- gsub("\\...", "",handles)
+  # clean punctuation
+  handles <- trimws(handles) # remove white space
+  handles <- gsub(":", "", handles)
+  handles <- gsub(",", "", handles)
+  handles <- gsub(";", "", handles)
+  handles <- gsub(">", "", handles)
+  handles <- gsub("<", "", handles)
+  handles <- gsub("?", "", handles)
+  handles <- gsub("\\...", "", handles)
   
   # remove @@
   if(length(grep("@", handles))){

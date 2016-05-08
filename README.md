@@ -3,6 +3,7 @@
 [![codecov.io](https://codecov.io/github/JohnCoene/graphTweets/coverage.svg?branch=master)](https://codecov.io/github/JohnCoene/graphTweets?branch=master)
 [![Coverage Status](https://img.shields.io/coveralls/JohnCoene/graphTweets.svg)](https://coveralls.io/r/JohnCoene/graphTweets?branch=master)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/graphTweets)](http://cran.r-project.org/package=graphTweets)
+[![CRAN log](http://cranlogs.r-pkg.org/badges/graphTweets)](http://cranlogs.r-pkg.org/badges/graphTweets)
 
 ![gephi.gif](https://github.com/JohnCoene/docs/raw/master/output.gif)
 
@@ -10,7 +11,7 @@
 
 Visualise networks of Twitter interactions
 
-Features only *three* functions:
+Features *three* functions:
 
 * `getEdges`: build edge table from tweets
 * `getNodes`: get nodes from edges
@@ -27,33 +28,21 @@ See `NEWS.md` for changes.
 
 ## Examples ##
 
-```
-# load twitteR
+```R
+# load twitteR to get tweets
 library(twitteR)
-
-# authenticate
 token <- setup_twitter_oauth(consumer_key, consumer_secret, 
                              access_token=NULL, access_secret=NULL)
-
-# search tweets
 tweets <- searchTwitter("rstats", n = 200)
-
-# unlist to data.frame
 tweets <- twListToDF(tweets)
 
 library(graphTweets)
 
-# get edges
 edges <- getEdges(data = tweets, tweets = "text", source = "screenName")
-
-# get nodes
 nodes <- getNodes(edges)
 
-# load igraph
-library(igraph)
-
 # plot
-g <- graph.data.frame(edges, directed=TRUE, vertices = nodes)
+g <- igraph::graph.data.frame(edges, directed=TRUE, vertices = nodes)
 
 plot(g)
 ```
