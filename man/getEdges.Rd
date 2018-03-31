@@ -37,6 +37,7 @@ This is useful for non-latin alphabet where nodes may be wrongly identified
 (i.e.: Chinese Sina Weibo data).
 }
 \examples{
+\dontrun{
 # simulate dataset
 tweets <- data.frame(text = c("I tweet @you about @him", 
                               "I tweet @me about @you"),
@@ -49,14 +50,9 @@ edges <- getEdges(data = tweets, tweets = "text", source = "screenName")
 # use igraph to make graph object
 g <- igraph::graph.data.frame(edges)
 plot(g)
+}
 
 }
 \author{
 John Coene \email{john.coene@gmail.com}
 }
-\seealso{
-\href{http://cran.r-project.org/web/packages/twitteR/twitteR.pdf}{twitteR} 
-and \href{http://cran.r-project.org/web/packages/streamR/streamR.pdf}{streamR} 
-packages wherefrom the data (\code{data}) can be obtained.
-}
-

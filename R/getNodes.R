@@ -17,6 +17,7 @@
 #' only applies to the source of edges; NAs are generated for target nodes.
 #' 
 #' @examples 
+#' \dontrun{
 #' # simulate dataset
 #' tweets <- data.frame(text = c("I tweet @you about @him", 
 #'                               "I tweet @me about @you"),
@@ -35,11 +36,14 @@
 #' # plot
 #' g <- igraph::graph.data.frame(edges, directed = TRUE, vertices = nodes)
 #' plot(g, vertex.color = igraph::V(g)$favorited)
+#' }
 #' 
 #' @author John Coene \email{jcoenep@@gmail.com}
 #' 
 #' @export
 getNodes <- function(edges, source = "source", target = "target", ...) {
+  
+  .Deprecated("gt_nodes")
   
   # check inputs
   if (class(edges) != "data.frame") {

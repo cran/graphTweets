@@ -1,10 +1,56 @@
 # global variables to avoid R CMD CHECK note (timeNodes) 
-globalVariables(c("start.stamp", "end.stamp"))
+globalVariables(c("start.stamp", "end.stamp", ".", "created_at"))
+
+# clean handles
+clean_handles <- function(handles) {
+  # clean punctuation
+  handles <- gsub("[[:space:]]|:|,|;|>|<|?|\\.*", "", handles) # remove white space
+  
+  # remove @
+  if(length(grep("@", handles))){
+    handles <- substring(handles, 2)
+  }
+  
+  return(handles)
+}
+
+extract_handles <- function(x) {
+  regmatches(x, gregexpr("@[^ ]*", x))[[1]]
+}
+
+construct <- function(tweets, edges, nodes = NULL){
+  if(is.null(nodes)){
+    data <- list(
+      tweets = tweets,
+      edges = edges
+    )
+  } else {
+    data <- list(
+      tweets = tweets,
+      edges = edges,
+      nodes = nodes
+    )
+  }
+  attr(data, "hidden") <- "tweets"
+  structure(data, class = "graphTweets")
+}
+
+deconstruct <- function(gt){
+  list(
+    edges = gt[["edges"]],
+    nodes = gt[["nodes"]]
+  )
+}
+
+test_input <- function(gt){
+  if (!inherits(gt, "graphTweets")) 
+    stop("gt is not of class graphTweets", call. = FALSE)
+}
 
 # clean handles
 cleanHandles <- function(handles) {
   # clean punctuation
-  handles <- trimws(handles) # remove white space
+  handles <- gsub("[[:space:]]", "", handles) # remove white space
   handles <- gsub(":", "", handles)
   handles <- gsub(",", "", handles)
   handles <- gsub(";", "", handles)

@@ -23,11 +23,8 @@
 #' This is useful for non-latin alphabet where nodes may be wrongly identified 
 #' (i.e.: Chinese Sina Weibo data). 
 #' 
-#' @seealso \href{http://cran.r-project.org/web/packages/twitteR/twitteR.pdf}{twitteR} 
-#' and \href{http://cran.r-project.org/web/packages/streamR/streamR.pdf}{streamR} 
-#' packages wherefrom the data (\code{data}) can be obtained.
-#' 
 #' @examples 
+#' \dontrun{
 #' # simulate dataset
 #' tweets <- data.frame(text = c("I tweet @you about @him", 
 #'                               "I tweet @me about @you"),
@@ -40,11 +37,14 @@
 #' # use igraph to make graph object
 #' g <- igraph::graph.data.frame(edges)
 #' plot(g)
+#' }
 #' 
 #' @author John Coene \email{john.coene@@gmail.com}
 #' 
 #' @export 
 getEdges <- function(data, tweets, source, str.length = NULL, ...) {
+  
+  .Deprecated("gt_edges")
   
   if (class(data) != "data.frame") {
     stop("data must be a data.frame")
@@ -70,7 +70,6 @@ getEdges <- function(data, tweets, source, str.length = NULL, ...) {
   
   # cut source
   if(!is.null(str.length)){
-    
     # cut screenName
     data[, source] <- substring(data[, source], 0, str.length)
     
