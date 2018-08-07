@@ -1,7 +1,18 @@
+# graphTweets 0.4.3
+
+* Added `gt_edges_hashes_` and `gt_edges_hashes` to build networks of #hashtags co-mentions.
+* Added `%<-%` from the zeallot package to unpack the nodes and edges.
+* Fixed `gt_dyn` bug where lifetime was not working properly.
+
+# graphTweets 0.4.2
+
+Removed `splitstackshape` dependency ahead of its archival; now uses `tidyr`.
+
 # graphTweets 0.4.1
 
 * `gt_nodes` returns number of `n_edges`, the number of edges the node is present in.
-* `gt_edges_hash` and respective escape hatch added! 
+* `gt_edges_hash` and respective escape hatch added 
+* `gt_dyn` returns correct start and end.
 
 # graphTweets 0.4.0
 

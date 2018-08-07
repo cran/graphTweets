@@ -16,6 +16,7 @@ utils::globalVariables(c("start"))
 #' \itemize{
 #'   \item{\code{gt_edges} - Build networks of users.}
 #'   \item{\code{gt_edges_hash} - Build networks of users to hashtags.}
+#'   \item{\code{gt_edges_hashes} - Build networks of hashtags co-mentions.}
 #' }
 #' 
 #' @details The \code{tl} arguments stands for \code{\link{tolower}} and allows converting the #hashtags to lower case as 
@@ -127,7 +128,7 @@ gt_edges_hash_ <- function(data, hashtags = "hashtags", source = "screen_name", 
   
   edges <- data %>% 
     dplyr::select_(hashtags, source, ...) %>% 
-    tidyr::unnest_("hashtags") %>% 
+    tidyr::unnest_(hashtags) %>% 
     dplyr::mutate(
       hashtags = dplyr::case_when(
         tl == TRUE ~ tolower(hashtags),
@@ -140,6 +141,54 @@ gt_edges_hash_ <- function(data, hashtags = "hashtags", source = "screen_name", 
     dplyr::mutate(hashtags = paste0("#", hashtags))
   
   names(edges)[1:3] <- c("source", "target", "n_tweets")
+  construct(data, edges, NULL)
+}
+
+#' @rdname edges
+#' @export
+gt_edges_hashes <- function(data, hashtags,  tl = TRUE){
+  if(missing(data) || missing(hashtags))
+    stop("missing data or hashtags", call. = FALSE)
+  hashtags <- deparse(substitute(hashtags))
+  gt_edges_hashes_(data, hashtags, tl = tl)
+}
+
+#' @rdname edges
+#' @export
+gt_edges_hashes_ <- function(data, hashtags = "hashtags", tl = TRUE){
+  
+  if(missing(data))
+    stop("missing data", call. = FALSE)
+  
+  b_edges <- function(x){
+    h <- unlist(x)
+    if(length(h) > 1){
+      cbn <- combinat::combn(h, 2, simplify = FALSE) %>% 
+        purrr::map(function(n){
+          names(n) <- c("source", "target")
+          return(n)
+        }) %>% 
+        purrr::map_df(dplyr::bind_rows)
+      return(cbn)
+    }
+  }
+  
+  edges <- purrr::map(data[[hashtags]], b_edges) %>% 
+    purrr::map_df(dplyr::bind_rows) %>% 
+    dplyr::mutate(
+      source = dplyr::case_when(
+        tl == TRUE ~ tolower(source),
+        TRUE ~ source
+      ),
+      target = dplyr::case_when(
+        tl == TRUE ~ tolower(target),
+        TRUE ~ target
+      )
+    ) %>% 
+    dplyr::group_by_("source", "target") %>% 
+    dplyr::summarise(n_comentions = n()) %>% 
+    dplyr::ungroup()
+  
   construct(data, edges, NULL)
 }
 
@@ -182,6 +231,8 @@ gt_nodes <- function(gt, meta = FALSE){
       rep("user", nrow(gt[["edges"]])),
       rep("hashtag", nrow(gt[["edges"]]))
     )
+  else if("n_comentions" %in% names(gt[["edges"]]))
+    type <- "hashtag"
   else
     type <- "user"
   
@@ -237,6 +288,8 @@ gt_collect <- function(gt){
 
 #' Graph
 #' 
+#' Build \code{igraph} object.
+#' 
 #' @inherit gt_collect
 #' 
 #' @examples 
@@ -280,11 +333,10 @@ gt_graph <- function(gt){
 #' \dontrun{
 #' # simulate dataset
 #' tweets <- data.frame(
-#'   text = c("I tweet @you about @him", 
+#'   text = c("I tweet @you about @him and @her", 
 #'            "I tweet @me about @you"),
 #'   screen_name = c("me", "him"),
-#'   retweet_count = c(19, 5),
-#'   created_at = c(Sys.time(), Sys.time() + 15000),
+#'   created_at = c(Sys.time(), Sys.time() + 10000),
 #'   status_id = c(1, 2),
 #'   stringsAsFactors = FALSE
 #' )
@@ -299,40 +351,53 @@ gt_graph <- function(gt){
 #' @rdname dyn
 #' @export
 gt_dyn <- function(gt, lifetime = Inf){
+  
   test_input(gt)
   
   if(!"created_at" %in% names(gt[["edges"]]))
     stop("missing created_at column", call. = FALSE)
   
+  edges <- gt[["edges"]]
+  
   if(is.infinite(lifetime)){
-    lifetime <- max(gt[["edges"]][["created_at"]])
-    gt[["edges"]][["end"]] <- lifetime
+    lifetime <- max(edges[["created_at"]])
+    edges[["end"]] <- lifetime
   } else {
-    gt[["edges"]][["end"]] <- gt[["edges"]][["created_at"]] + lifetime 
+    edges[["end"]] <- edges[["created_at"]] + lifetime 
   }
   
-  src <- gt[["edges"]][, c("source", "created_at")]
-  tgt <- gt[["edges"]][, c("target", "created_at")]
+  src <- edges[, c("source", "created_at")]
+  src2 <- edges[, c("source", "end")]
+  tgt <- edges[, c("target", "created_at")]
+  tgt2 <- edges[, c("target", "end")]
   
-  names(tgt)[1] <- c("source")
+  rename <- function(x){
+    names(x)[1:2] <- c("source", "created_at")
+    return(x)
+  }
+  
+  src2 <- rename(src2)
+  tgt <- rename(tgt)
+  tgt2 <- rename(tgt2)
   
   nodes <- src %>% 
-    dplyr::bind_rows(tgt) %>% 
+    dplyr::bind_rows(tgt, tgt2, src2) %>% 
+    dplyr::distinct() %>% 
     dplyr::group_by(source) %>% 
-    unique() %>% 
     dplyr::summarise(
-      start = min(created_at)
+      start = min(created_at),
+      end = max(created_at)
     ) %>% 
     dplyr::ungroup() %>% 
-    dplyr::mutate(
-      end = max(start)
-    ) %>% 
+    dplyr::distinct() %>% 
     dplyr::inner_join(gt[["nodes"]], by = c("source" = "nodes"))
+  
+  names(nodes)[1] <- "nodes"
   
   if(nrow(nodes) != nrow(gt[["nodes"]]))
     warning("incorrect number of nodes", call. = FALSE)
 
-  construct(gt[["tweets"]], gt[["edges"]], nodes)
+  construct(gt[["tweets"]], edges, nodes)
 }
 
 #' Save

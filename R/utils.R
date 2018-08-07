@@ -1,5 +1,5 @@
 # global variables to avoid R CMD CHECK note (timeNodes) 
-globalVariables(c("start.stamp", "end.stamp", ".", "created_at", "target"))
+globalVariables(c("start.stamp", "end.stamp", ".", "created_at", "target", "end"))
 
 # clean handles
 clean_handles <- function(handles) {
@@ -19,12 +19,13 @@ extract_handles <- function(x) {
 }
 
 construct <- function(tweets, edges, nodes = NULL){
-  if(is.null(nodes)){
-    data <- list(
-      tweets = tweets,
-      edges = edges
-    )
-  } else {
+  
+  data <- list(
+    tweets = tweets,
+    edges = edges
+  )
+  
+  if(!is.null(nodes)){
     data <- list(
       tweets = tweets,
       edges = edges,
