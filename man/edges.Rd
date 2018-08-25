@@ -2,82 +2,34 @@
 % Please edit documentation in R/overhaul.R
 \name{gt_edges}
 \alias{gt_edges}
-\alias{gt_edges_}
-\alias{gt_edges_hash}
-\alias{gt_edges_hash_}
-\alias{gt_edges_hashes}
-\alias{gt_edges_hashes_}
+\alias{gt_edges_bind}
+\alias{gt_co_edges}
+\alias{gt_co_edges_bind}
 \title{Edges}
 \usage{
-gt_edges(data, tweets, source, id, ...)
+gt_edges(data, source, target, ..., tl = TRUE)
 
-gt_edges_(data, tweets = "text", source = "screen_name", id = "status_id",
-  ...)
+gt_edges_bind(gt, source, target, ..., tl = TRUE)
 
-gt_edges_hash(data, hashtags, source, ..., tl = TRUE)
+gt_co_edges(data, col, tl = TRUE)
 
-gt_edges_hash_(data, hashtags = "hashtags", source = "screen_name", ...,
-  tl = TRUE)
-
-gt_edges_hashes(data, hashtags, tl = TRUE)
-
-gt_edges_hashes_(data, hashtags = "hashtags", tl = TRUE)
+gt_co_edges_bind(gt, col, tl = TRUE)
 }
 \arguments{
 \item{data}{Data.frame of tweets, usually returned by the \code{rtweet} package.}
 
-\item{tweets}{Column containing tweets.}
-
 \item{source}{Author of tweets.}
 
-\item{id}{tweets unique id.}
+\item{target}{Edges target.}
 
 \item{...}{any other column name, see examples.}
 
-\item{hashtags}{Column containing hashtags.}
-
 \item{tl}{Set to \code{TRUE} to convert hashtags to lower case.}
-}
-\value{
-An object of class \code{graphTweets}.
+
+\item{gt}{An object of class \code{graphTweets} as returned by \code{\link{gt_edges}} and \code{\link{gt_nodes}}.}
+
+\item{col}{Column containing co-mentions.}
 }
 \description{
 Get edges from data.frame of tweets.
-}
-\details{
-The \code{tl} arguments stands for \code{\link{tolower}} and allows converting the #hashtags to lower case as 
-these often duplicated, i.e.: #python #Python.
-}
-\section{Functions}{
-
-\itemize{
-  \item{\code{gt_edges} - Build networks of users.}
-  \item{\code{gt_edges_hash} - Build networks of users to hashtags.}
-  \item{\code{gt_edges_hashes} - Build networks of hashtags co-mentions.}
-}
-}
-
-\examples{
-# simulate dataset
-tweets <- data.frame(
-  text = c("I tweet @you about @him and @her", 
-           "I tweet @me about @you"),
-  screen_name = c("me", "him"),
-  retweet_count = c(19, 5),
-  status_id = c(1, 2),
-  hashtags = c("rstats", "Python"),
-  stringsAsFactors = FALSE
-)
-
-tweets \%>\% 
-  gt_edges(text, screen_name, status_id)
-  
-tweets \%>\% 
-  gt_edges_(RT = "retweet_count") \%>\% 
-  gt_nodes()
- 
-tweets \%>\% 
-  gt_edges_hash(hashtags, screen_name) \%>\% 
-  gt_nodes()
-    
 }

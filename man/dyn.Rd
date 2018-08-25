@@ -7,7 +7,7 @@
 gt_dyn(gt, lifetime = Inf)
 }
 \arguments{
-\item{gt}{An object of class \code{graphTweets} as returned by \code{\link{gt_edges}}.}
+\item{gt}{An object of class \code{graphTweets} as returned by \code{\link{gt_edges}} and \code{\link{gt_nodes}}.}
 
 \item{lifetime}{Lifetime of a tweet in milliseconds, defaults to \code{Inf}.}
 }
@@ -18,11 +18,10 @@ Create a dynamic graph to import in Gephi.
 \dontrun{
 # simulate dataset
 tweets <- data.frame(
-  text = c("I tweet @you about @him", 
+  text = c("I tweet @you about @him and @her", 
            "I tweet @me about @you"),
   screen_name = c("me", "him"),
-  retweet_count = c(19, 5),
-  created_at = c(Sys.time(), Sys.time() + 15000),
+  created_at = c(Sys.time(), Sys.time() + 10000),
   status_id = c(1, 2),
   stringsAsFactors = FALSE
 )
