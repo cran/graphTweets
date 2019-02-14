@@ -117,10 +117,10 @@ gt_edges <- function(data, source, target, ..., tl = TRUE){
   if(missing(data) || missing(target) || missing(source))
     stop("missing data, target, or source", call. = FALSE)
   
-  col_name <- deparse(substitute(target))
-  
   target <- dplyr::enquo(target)
   source <- dplyr::enquo(source)
+  
+  col_name <- dplyr::quo_name(target)
   
   edges <- .select_edges(data, source, target, ...) %>% 
     .get_edges(tl, ...) %>% 
@@ -138,10 +138,10 @@ gt_edges_bind <- function(gt, source, target, ..., tl = TRUE){
   
   test_input(gt)
   
-  col_name <- deparse(substitute(target))
-  
   target <- dplyr::enquo(target)
   source <- dplyr::enquo(source)
+
+  col_name <- dplyr::quo_name(target)
   
   edges <- .select_edges(gt$tweets, source, target, ...) %>% 
     .get_edges(tl, ...) %>% 
@@ -157,9 +157,11 @@ gt_co_edges <- function(data, col, tl = TRUE){
   if(missing(data))
     stop("missing data or col", call. = FALSE)
   
-  col_name <- deparse(substitute(col))
+  col_name <- rlang::enexpr(col)
   
-  edges <- purrr::map(data[[col_name]], .bind_co_occurences) %>% 
+  edges <- data %>%
+    dplyr::pull(!!dplyr::enquo(col)) %>% 
+    purrr::map(.bind_co_occurences) %>% 
     purrr::map_df(dplyr::bind_rows) %>% 
     dplyr::mutate(
       source = dplyr::case_when(
@@ -174,7 +176,7 @@ gt_co_edges <- function(data, col, tl = TRUE){
     dplyr::count(source, target) %>% 
     dplyr::filter(!is.na(target)) %>% 
     .rename_targets(col_name) %>% 
-    .rename_sources(col_name)
+    .rename_sources(col_name)  
   
   construct(tweets = data, edges = edges, nodes = NULL)
 }
@@ -188,9 +190,11 @@ gt_co_edges_bind <- function(gt, col, tl = TRUE){
   
   test_input(gt)
   
-  col_name <- deparse(substitute(col))
+  col_name <- rlang::enexpr(col)
   
-  edges <- purrr::map(gt$tweets[[col_name]], .bind_co_occurences) %>% 
+  edges <- gt$tweets %>% 
+    dplyr::pull(!!dplyr::enquo(col)) %>% 
+    purrr::map(.bind_co_occurences) %>% 
     purrr::map_df(dplyr::bind_rows) %>% 
     dplyr::mutate(
       source = dplyr::case_when(

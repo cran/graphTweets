@@ -1,8 +1,8 @@
 Package: graphTweets
 Type: Package
 Title: Visualise Twitter Interactions
-Version: 0.5.0
-Date: 2018-08-25
+Version: 0.5.1
+Date: 2019-02-12
 Authors@R: 
     person("John", "Coene", email = "jcoenep@gmail.com", 
     role = c("aut", "cre"))
@@ -10,16 +10,15 @@ Description: Allows building an edge table from data frame of tweets,
   also provides function to build nodes and another create a temporal graph.
 License: MIT + file LICENSE
 Depends: R (>= 3.2.0)
-Imports: dplyr, igraph, rtweet, purrr, magrittr, utils, tidyr, zeallot,
-        combinat
-RoxygenNote: 6.1.0
+Imports: dplyr, igraph, rtweet, purrr, rlang, magrittr, utils, tidyr,
+        zeallot, combinat
+RoxygenNote: 6.1.1
 URL: http://graphTweets.john-coene.com
 BugReports: https://github.com/JohnCoene/graphTweets/issues
-Suggests: testthat, htmltools
-Encoding: UTF-8
+Suggests: testthat
 NeedsCompilation: no
-Packaged: 2018-08-25 16:37:59 UTC; jp
+Packaged: 2019-02-13 13:42:36 UTC; jcoe
 Author: John Coene [aut, cre]
 Maintainer: John Coene <jcoenep@gmail.com>
 Repository: CRAN
-Date/Publication: 2018-08-25 17:02:18 UTC
+Date/Publication: 2019-02-14 09:20:24 UTC
